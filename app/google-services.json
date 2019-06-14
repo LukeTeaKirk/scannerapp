@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1082655281477",
+    "firebase_url": "https://scanner-app-16f65.firebaseio.com",
+    "project_id": "scanner-app-16f65",
+    "storage_bucket": "scanner-app-16f65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1082655281477:android:f383e5c49d3f06ea",
+        "android_client_info": {
+          "package_name": "com.rajcomics.scannerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1082655281477-ha3975kddd5ddocmee9680biov81mn4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSQYw2mSF2MD7Nxg0uNgDH2Llrba-C7rY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1082655281477-ha3975kddd5ddocmee9680biov81mn4p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
