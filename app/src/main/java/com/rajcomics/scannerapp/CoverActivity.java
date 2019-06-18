@@ -12,6 +12,7 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
@@ -28,6 +29,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.Surface;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 /*import com.google.android.gms.common.Feature;
@@ -71,6 +74,8 @@ public class CoverActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+    int averageColor;
+    Bitmap bitmap7;
     int[] rgb = new int [16];
     String resultText;
     String[][] label2;
@@ -87,6 +92,16 @@ public class CoverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cover);
         setTitle("Cover Scanner");
         photoURI = dispatchTakePictureIntent();
+        initViews();
+    }
+    private void initViews(){
+        Button calcbutton = findViewById(R.id.calcbutton);
+        calcbutton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                main(bitmap7);
+            }
+        });
     }
     @RequiresApi(api = Build.VERSION_CODES.FROYO)
     private Uri dispatchTakePictureIntent() {
@@ -169,19 +184,19 @@ public class CoverActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         ImageView BarcodeImage = findViewById(R.id.coverView);
-        Bitmap bitmap = null;
+        bitmap7 = null;
         if (requestCode == 1) {
             Log.d("xyz", photoURI.toString());
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                bitmap7 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            BarcodeImage.setImageBitmap(bitmap);
+            BarcodeImage.setImageBitmap(bitmap7);
         }
-        main(bitmap);
+        //main(bitmap);
     }
-    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    public Bitmap toGrayscale2(Bitmap bmpOriginal)
     {
         int width, height;
         height = bmpOriginal.getHeight();
@@ -196,6 +211,36 @@ public class CoverActivity extends AppCompatActivity {
         paint.setColorFilter(f);
         c.drawBitmap(bmpOriginal, 0, 0, paint);
         return bmpGrayscale;
+    }
+    public Bitmap toGrayscale(Bitmap src){
+        int width = src.getWidth();
+        int height = src.getHeight();
+        // create output bitmap
+        Bitmap bmOut = Bitmap.createBitmap(width, height, src.getConfig());
+        // color information
+        int A, R, G, B;
+        int pixel;
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                // get pixel color
+                pixel = src.getPixel(x, y);
+                A = Color.alpha(pixel);
+                R = Color.red(pixel);
+                G = Color.green(pixel);
+                B = Color.blue(pixel);
+                int gray = (int) (0.2989 * R + 0.5870 * G + 0.1140 * B);
+                // use 128 as threshold, above -> white, below -> black
+                if (gray > 128) {
+                    gray = 255;
+                }
+                else{
+                    gray = 0;
+                }
+                // set new pixel color to output bitmap
+                bmOut.setPixel(x, y, Color.argb(A, gray, gray, gray));
+            }
+        }
+        return bmOut;
     }
 
     public void getAverageColor(Bitmap bitmap){
@@ -255,6 +300,7 @@ public class CoverActivity extends AppCompatActivity {
             for (int y = (bitmap.getHeight() / 4) * (count3 - 1); y < (bitmap.getHeight() / 4) * count3; y++) {
                 for(int x = (bitmap.getWidth()/4)*(count2-1); x < (bitmap.getWidth()/4)*count2; x++){
                     int c = bitmap.getPixel(x,y);
+                    //Log.d("pixelvalue", String.valueOf(c));
                     white = white + c;
                     pixelCount++;
                     //Log.d("color", String.valueOf(c));
@@ -262,9 +308,18 @@ public class CoverActivity extends AppCompatActivity {
                 }
             }
             rgb[count-1] = white / pixelCount;
-            Log.d("color123456", String.valueOf(rgb[count-1]));
+            //Log.d("color123456", String.valueOf(rgb[count-1]));
 
         }
+        for(int x = 0; x<16; x++) {
+            Log.d("color123", "averagecolor3:" + x);
+
+            Log.d("color123", "averagecolor2:" + rgb[x]);
+            averageColor =+ rgb[x];
+        }
+        averageColor = averageColor/16;
+        Log.d("color123", "averagecolor:" + averageColor);
+
     }
     public void gettext(Bitmap bitmap){
         Log.d("label", "text");
@@ -362,10 +417,10 @@ public class CoverActivity extends AppCompatActivity {
         gettext(bitmap);
     }
     public void main(Bitmap bitmap){
-        //getlabel(bitmap);
-        //getAverageColor(bitmap);
-        //gettext(bitmap);
-        database(bitmap);
+        getlabel(bitmap);
+        getAverageColor(bitmap);
+        gettext(bitmap);
+        //database(bitmap);
     }
 }
 

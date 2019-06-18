@@ -25,4 +25,14 @@
         android:text="Name:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/coverView" />
+
+    <Button
+        android:id="@+id/calcbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="31dp"
+        android:text="Calculate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NameView" />
 </android.support.constraint.ConstraintLayout>
