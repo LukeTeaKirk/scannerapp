@@ -5,6 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
@@ -47,6 +52,7 @@ import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -65,6 +71,7 @@ public class CoverActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+    int[] rgb = new int [16];
     String resultText;
     String[][] label2;
     int x = 0;
@@ -174,6 +181,91 @@ public class CoverActivity extends AppCompatActivity {
         }
         main(bitmap);
     }
+    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
+    }
+
+    public void getAverageColor(Bitmap bitmap){
+        bitmap = toGrayscale(bitmap);
+        AverageColor(bitmap);
+        /*int white;
+        int pixelCount;
+        int[] blockaverage = new int[16];
+        int blockheight = bitmap.getHeight()/4;
+        int blockwidth = bitmap.getWidth()/4;
+        for (int count = 1; count <= 16; count += 1) {
+            white = 0;
+            pixelCount = 1;
+            int count2 = 1;
+            for (int y = blockheight*(count-1); y < blockheight*count; y++)
+            {
+                count2 = 1;
+                for (int x = blockwidth*(count2 -1); x < blockwidth*(count2); x++)
+                {
+                    count2++;
+                    int c = bitmap.getPixel(x, y);
+                    white = white + c;
+                    pixelCount++;
+                }
+            }
+            blockaverage[1] = white;///pixelCount;
+            String temp = String.valueOf(blockaverage[1]);
+            Log.d("color123", temp);
+        }*/
+    }
+    protected void AverageColor(Bitmap bitmap) {
+        System.gc();
+        int white;
+        int redBucket;
+        int greenBucket;
+        int blueBucket;
+        int pixelCount;
+        int blocks = 4;
+        int blockCount = 1;
+        int blockCount2 = 1;
+        int count2 = 0;
+        int count3 = 1;
+        for (int count = 1; count <= 4*4; count += 1) {
+            if (count2 < 5){
+                count2++;
+            }
+            if (count2 == 5)
+            {
+                count2 = 1;
+                count3 = count3 + 1;
+            }
+            if (count3 == 5){
+                count3 = 1;
+            }
+            white = 0;
+            pixelCount = 1;
+            for (int y = (bitmap.getHeight() / 4) * (count3 - 1); y < (bitmap.getHeight() / 4) * count3; y++) {
+                for(int x = (bitmap.getWidth()/4)*(count2-1); x < (bitmap.getWidth()/4)*count2; x++){
+                    int c = bitmap.getPixel(x,y);
+                    white = white + c;
+                    pixelCount++;
+                    //Log.d("color", String.valueOf(c));
+
+                }
+            }
+            rgb[count-1] = white / pixelCount;
+            Log.d("color123456", String.valueOf(rgb[count-1]));
+
+        }
+    }
     public void gettext(Bitmap bitmap){
         Log.d("label", "text");
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
@@ -227,37 +319,16 @@ public class CoverActivity extends AppCompatActivity {
 
     }
     public void database(Bitmap bitmap){
-        for (x = 0; x < 3; x++){
-            /*File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            Bitmap bitmap2 = null;
-            bitmap2 = BitmapFactory.decodeFile(storageDir.getAbsolutePath() + "/" + x);
-
-            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
-            FirebaseVisionImageLabeler labeler = FirebaseVision.getInstance()
-                .getOnDeviceImageLabeler();
-            labeler.processImage(image)
-                .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
-                    @Override
-                    public void onSuccess(List<FirebaseVisionImageLabel> labels) {
-                        for (FirebaseVisionImageLabel label: labels) {
-                            text7 = label.getText();
-                            entityId = label.getEntityId();
-                            float confidence = label.getConfidence();
-                            label2[x][y] = text7;
-                            y = y + 1;
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Task failed with an exception
-                        // ...
-                    }
-                });*/
+        for (x = 1; x < 3; x++){
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            String s = "sdcard/android/data/com.rajcomics.scannerapp/files/pictures/" + x + ".jpg";
+            bitmap = BitmapFactory.decodeFile(s);
+            getlabel(bitmap);
+            getAverageColor(bitmap);
+            gettext(bitmap);
         }
     }
-    public void main(Bitmap bitmap){
+    public void getlabel(Bitmap bitmap){
         Log.d("ML", "1");
         FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap);
         Log.d("ML", "2");
@@ -283,41 +354,18 @@ public class CoverActivity extends AppCompatActivity {
                         // ...
                     }
                 });
-        gettext(bitmap);
-        database(bitmap);
-
-
 
     }
-    /*&public static void detectCropHints(String filePath, PrintStream out) throws Exception,
-            IOException {
-        List<AnnotateImageRequest> requests = new ArrayList<>();
-
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
-
-        Image img = Image.newBuilder().setContent(imgBytes).build();
-        Feature feat = Feature.newBuilder().setType(Type.CROP_HINTS).build();
-        AnnotateImageRequest request =
-                AnnotateImageRequest.newBuilder().addFeatures(feat).setImage(img).build();
-        requests.add(request);
-
-        try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
-            BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
-            List<AnnotateImageResponse> responses = response.getResponsesList();
-
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    out.printf("Error: %s\n", res.getError().getMessage());
-                    return;
-                }
-
-                // For full list of available annotations, see http://g.co/cloud/vision/docs
-                CropHintsAnnotation annotation = res.getCropHintsAnnotation();
-                for (CropHint hint : annotation.getCropHintsList()) {
-                    out.println(hint.getBoundingPoly());
-                }
-            }
-        }
-    }*/
+    public void databasemethod(Bitmap bitmap){
+        getlabel(bitmap);
+        getAverageColor(bitmap);
+        gettext(bitmap);
+    }
+    public void main(Bitmap bitmap){
+        //getlabel(bitmap);
+        //getAverageColor(bitmap);
+        //gettext(bitmap);
+        database(bitmap);
+    }
 }
 
