@@ -338,7 +338,7 @@ public class CoverActivity extends AppCompatActivity {
         FirebaseVisionOnDeviceAutoMLImageLabelerOptions labelerOptions =
                 new FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder()
                         .setLocalModelName("CharacterModel")    // Skip to not use a local model
-                        .setConfidenceThreshold(0.5f)  // Evaluate your model in the Firebase console
+                        .setConfidenceThreshold(0.3f)  // Evaluate your model in the Firebase console
                         // to determine an appropriate value.
                         .build();
 
