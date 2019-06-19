@@ -21,10 +21,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -33,16 +29,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-/*import com.google.android.gms.common.Feature;
-import com.google.cloud.vision.v1.AnnotateImageRequest;
-import com.google.cloud.vision.v1.AnnotateImageResponse;
-import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
-import com.google.cloud.vision.v1.CropHint;
-import com.google.cloud.vision.v1.CropHintsAnnotation;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.protobuf.ByteString;
-*/
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -54,15 +45,9 @@ import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -74,6 +59,7 @@ public class CoverActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+    ImageView BarcodeImage;
     int averageColor;
     Bitmap bitmap7;
     int[] rgb = new int [16];
@@ -95,11 +81,13 @@ public class CoverActivity extends AppCompatActivity {
         initViews();
     }
     private void initViews(){
+        BarcodeImage = findViewById(R.id.coverView);
         Button calcbutton = findViewById(R.id.calcbutton);
+        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.rajcomcis);
         calcbutton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                main(bitmap7);
+                main(bm);
             }
         });
     }
@@ -183,6 +171,7 @@ public class CoverActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         ImageView BarcodeImage = findViewById(R.id.coverView);
         bitmap7 = null;
         if (requestCode == 1) {
@@ -240,6 +229,7 @@ public class CoverActivity extends AppCompatActivity {
                 bmOut.setPixel(x, y, Color.argb(A, gray, gray, gray));
             }
         }
+        BarcodeImage.setImageBitmap(bmOut);
         return bmOut;
     }
 
@@ -274,16 +264,14 @@ public class CoverActivity extends AppCompatActivity {
     protected void AverageColor(Bitmap bitmap) {
         System.gc();
         int white;
-        int redBucket;
-        int greenBucket;
-        int blueBucket;
+        int blackbucket;
         int pixelCount;
         int blocks = 4;
         int blockCount = 1;
         int blockCount2 = 1;
         int count2 = 0;
         int count3 = 1;
-        for (int count = 1; count <= 4*4; count += 1) {
+        for (int count = 1; count <= 16; count++) {
             if (count2 < 5){
                 count2++;
             }
@@ -299,15 +287,24 @@ public class CoverActivity extends AppCompatActivity {
             pixelCount = 1;
             for (int y = (bitmap.getHeight() / 4) * (count3 - 1); y < (bitmap.getHeight() / 4) * count3; y++) {
                 for(int x = (bitmap.getWidth()/4)*(count2-1); x < (bitmap.getWidth()/4)*count2; x++){
-                    int c = bitmap.getPixel(x,y);
-                    //Log.d("pixelvalue", String.valueOf(c));
-                    white = white + c;
+                    int pixel = bitmap.getPixel(x,y);
+                    int redValue = Color.red(pixel);
+                    int blueValue = Color.blue(pixel);
+                    int greenValue = Color.green(pixel);
+                    if (redValue == 255 & blueValue == 255 & greenValue == 255){
+                        white = white + 255;
+                    }
+
+                    //Log.d("pixelvalue", String.valueOf(white));
+                    //white = white + c;
                     pixelCount++;
                     //Log.d("color", String.valueOf(c));
 
                 }
             }
             rgb[count-1] = white / pixelCount;
+            Log.d("calc", "white: " + white + " and " + pixelCount + " and " + count);
+
             //Log.d("color123456", String.valueOf(rgb[count-1]));
 
         }
@@ -315,7 +312,7 @@ public class CoverActivity extends AppCompatActivity {
             Log.d("color123", "averagecolor3:" + x);
 
             Log.d("color123", "averagecolor2:" + rgb[x]);
-            averageColor =+ rgb[x];
+            averageColor = averageColor + rgb[x];
         }
         averageColor = averageColor/16;
         Log.d("color123", "averagecolor:" + averageColor);
@@ -416,6 +413,7 @@ public class CoverActivity extends AppCompatActivity {
         getAverageColor(bitmap);
         gettext(bitmap);
     }
+
     public void main(Bitmap bitmap){
         getlabel(bitmap);
         getAverageColor(bitmap);

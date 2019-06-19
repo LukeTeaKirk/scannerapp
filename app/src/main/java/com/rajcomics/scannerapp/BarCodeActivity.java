@@ -11,8 +11,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -21,6 +19,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.barcode.Barcode;
@@ -180,6 +181,7 @@ public class BarCodeActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         ImageView BarcodeImage = findViewById(R.id.barcodeView);
         //TextView barcode = (TextView) findViewById(R.id.barcodeText);
 
@@ -187,7 +189,7 @@ public class BarCodeActivity extends AppCompatActivity {
             Bitmap bitmap = null;
             Log.d("xyz", photoURI.toString());
             try {
-               bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoURI);
             } catch (IOException e) {
                 e.printStackTrace();
             }
