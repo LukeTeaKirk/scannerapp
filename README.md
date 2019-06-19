@@ -7,5 +7,6 @@ This application contains
     ii) Latin Text detected;
     iii)Labels identified by mk_kit;
     iv) The average color of the cover, seperated into 16 blocks;
-3.  Failing that, goes to the manual entry of a 4 digit code corresponding to the stock item with the appropriate verification and validation required.
+    iv) Characters identified by custom machine learning model
+3.  Failing that, goes to the manual entry of a 4 digit code corresponding to the stock item with the appropriate verification and validation that is required.
   
