@@ -28,26 +28,34 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.ml.common.FirebaseMLException;
+import com.google.firebase.ml.common.modeldownload.FirebaseLocalModel;
+import com.google.firebase.ml.common.modeldownload.FirebaseModelManager;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabel;
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler;
+import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions;
 import com.google.firebase.ml.vision.text.FirebaseVisionText;
 import com.google.firebase.ml.vision.text.FirebaseVisionTextRecognizer;
 import com.google.firebase.ml.vision.text.RecognizedLanguage;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -83,11 +91,11 @@ public class CoverActivity extends AppCompatActivity {
     private void initViews(){
         BarcodeImage = findViewById(R.id.coverView);
         Button calcbutton = findViewById(R.id.calcbutton);
-        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.rajcomcis);
+        final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.rat);
         calcbutton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                main(bm);
+                main(bitmap7);
             }
         });
     }
@@ -309,13 +317,68 @@ public class CoverActivity extends AppCompatActivity {
 
         }
         for(int x = 0; x<16; x++) {
-            Log.d("color123", "averagecolor3:" + x);
+            Log.d("color123", "averagecolor3: " + x);
 
-            Log.d("color123", "averagecolor2:" + rgb[x]);
+            Log.d("color123", "averagecolor2: " + rgb[x]);
             averageColor = averageColor + rgb[x];
         }
         averageColor = averageColor/16;
-        Log.d("color123", "averagecolor:" + averageColor);
+        Log.d("color123", "averagecolor: " + averageColor);
+
+    }
+    public void CustomLabelModel(){
+        Log.d("Characters", "started");
+
+        FirebaseLocalModel localModel = new FirebaseLocalModel.Builder("CharacterModel")
+                .setAssetFilePath("bundled/manifest.json")
+                .build();
+        Log.d("Characters", localModel.getAssetFilePath());
+        FirebaseModelManager.getInstance().registerLocalModel(localModel);
+        FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(bitmap7);
+        FirebaseVisionOnDeviceAutoMLImageLabelerOptions labelerOptions =
+                new FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder()
+                        .setLocalModelName("CharacterModel")    // Skip to not use a local model
+                        .setConfidenceThreshold(0.2f)  // Evaluate your model in the Firebase console
+                        // to determine an appropriate value.
+                        .build();
+
+        try {
+            Log.d("Characters", "in try");
+            FirebaseVisionImageLabeler labeler =
+                    FirebaseVision.getInstance().getOnDeviceAutoMLImageLabeler(labelerOptions);
+            labeler.processImage(image)
+                    .addOnSuccessListener(new OnSuccessListener<List<FirebaseVisionImageLabel>>() {
+                        @Override
+                        public void onSuccess(List<FirebaseVisionImageLabel> labels) {
+                            Log.d("Characters", "success");
+                            int x = 0;
+                            for (FirebaseVisionImageLabel label: labels) {
+
+                                String text = label.getText();
+                                float confidence = label.getConfidence();
+                                if (x == 0){
+                                    TextView chare = findViewById(R.id.textView5);
+                                    chare.setText(text);
+                                }
+                                Log.d("Characters", "running");
+                                Log.d("Characters", "Text: " + text + " confidence: " + confidence);
+                                x++;
+                            }
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Characters", "failed: " + e);
+                            // ...
+                        }
+                    });
+
+        } catch (FirebaseMLException e) {
+            e.printStackTrace();
+        }
+
 
     }
     public void gettext(Bitmap bitmap){
@@ -415,9 +478,10 @@ public class CoverActivity extends AppCompatActivity {
     }
 
     public void main(Bitmap bitmap){
-        getlabel(bitmap);
-        getAverageColor(bitmap);
-        gettext(bitmap);
+        //getlabel(bitmap);
+       // getAverageColor(bitmap);
+       // gettext(bitmap);
+        CustomLabelModel();
         //database(bitmap);
     }
 }

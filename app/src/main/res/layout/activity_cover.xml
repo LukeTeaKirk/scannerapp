@@ -35,4 +35,14 @@
         android:text="Calculate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/NameView" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="150dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="79dp"
+        android:text="TextView"
+        app:layout_constraintStart_toEndOf="@+id/NameView"
+        app:layout_constraintTop_toBottomOf="@+id/coverView" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
+    aaptOptions {
+        noCompress "tflite"
+    }
 
     compileSdkVersion 28
     defaultConfig {
@@ -24,6 +27,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-beta01'
     implementation 'com.google.firebase:firebase-core:17.0.0'
     implementation 'com.google.firebase:firebase-ml-vision:21.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision-automl:17.0.0'
     implementation 'com.google.firebase:firebase-ml-vision-image-label-model:18.0.0'
     implementation 'com.google.android.gms:play-services-vision:18.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
