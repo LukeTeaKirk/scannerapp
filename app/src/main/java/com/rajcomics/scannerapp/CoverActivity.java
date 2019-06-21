@@ -71,7 +71,6 @@ public class CoverActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-    int number1 = 0;
     boolean isImage = false;
     ImageView BarcodeImage;
     int averageColor;
@@ -94,23 +93,50 @@ public class CoverActivity extends AppCompatActivity {
         photoURI = dispatchTakePictureIntent();
         initViews();
     }
+    public enum numberofPictures{
+        INSTANCE;
+
+        private int number;
+        private numberofPictures(){
+            number = 0;
+        }
+
+        public int getNumber(){
+            return number;
+        }
+        public void addNumber(int score){
+            this.number += score;
+        }
+
+    }
     private void initViews(){
         BarcodeImage = findViewById(R.id.coverView);
         Button calcbutton = findViewById(R.id.calcbutton);
+        Button correctButton = findViewById(R.id.correctButton);
         final Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.rat);
         calcbutton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                if(isImage){
-
-                }
                 reset();
                 main(bitmap7);
-                isImage = true;
+                numberofPictures.INSTANCE.addNumber(1);
+            }
+        });
+        correctButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+               if(numberofPictures.INSTANCE.getNumber()>0){
+                   try {
+                       LabelFile();
+                   } catch (FileNotFoundException e) {
+                       e.printStackTrace();
+                   }
+               }
             }
         });
     }
     private void LabelFile() throws FileNotFoundException {
+        int x2 = numberofPictures.INSTANCE.getNumber();
         CheckBox nagraj = findViewById(R.id.nagraj);
         CheckBox doga = findViewById(R.id.doga);
         CheckBox dhruv = findViewById(R.id.dhruva);
@@ -118,9 +144,10 @@ public class CoverActivity extends AppCompatActivity {
         Boolean nagrajb = nagraj.isChecked();
         Boolean dhruvb = dhruv.isChecked();
         if(dogaB & nagrajb & dhruvb){
-            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + String.valueOf(number1) + ".jpg");
+            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga");
+            File dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -130,10 +157,11 @@ public class CoverActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             System.gc();
-            number1 = number1 + 1;
-            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + String.valueOf(number1) + ".jpg");
+            numberofPictures.INSTANCE.addNumber(1);
+            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv");
+            dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            fOut = new FileOutputStream(file);
+            fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -143,10 +171,11 @@ public class CoverActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             System.gc();
-            number1 = number1 + 1;
-            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + String.valueOf(number1) + ".jpg");
+            numberofPictures.INSTANCE.addNumber(1);
+            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj");
+            dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            fOut = new FileOutputStream(file);
+            fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -155,15 +184,15 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
+            numberofPictures.INSTANCE.addNumber(1);
 
         }
         if(dogaB & nagrajb & !dhruvb){
-            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + String.valueOf(number1) + ".jpg");
+            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga");
+            File dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -173,10 +202,11 @@ public class CoverActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             System.gc();
-            number1 = number1 + 1;
-            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + String.valueOf(number1) + ".jpg");
+            numberofPictures.INSTANCE.addNumber(1);
+            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj");
+            dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            fOut = new FileOutputStream(file);
+            fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -185,15 +215,15 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
+            numberofPictures.INSTANCE.addNumber(1);
 
         }
         if(dogaB & dhruvb & !nagrajb){
-            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + String.valueOf(number1) + ".jpg");
+            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga");
+            File dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/doga/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -202,12 +232,12 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
-            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + String.valueOf(number1) + ".jpg");
+            numberofPictures.INSTANCE.addNumber(1);
+            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv");
+            dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            fOut = new FileOutputStream(file);
+            fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -216,15 +246,15 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
+            numberofPictures.INSTANCE.addNumber(1);
 
         }
         if(dhruvb & nagrajb & !dogaB){
-            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + String.valueOf(number1) + ".jpg");
+            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv");
+            File dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/dhruv/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -233,12 +263,12 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
-            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + String.valueOf(number1) + ".jpg");
+            numberofPictures.INSTANCE.addNumber(1);
+            file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj");
+            dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/nagraj/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            fOut = new FileOutputStream(file);
+            fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -247,12 +277,11 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
+            numberofPictures.INSTANCE.addNumber(1);
 
         }
-        else{
+        if(x2 == numberofPictures.INSTANCE.getNumber()){
             String foldername = "";
             if(dogaB){
                 foldername = "doga";
@@ -265,9 +294,10 @@ public class CoverActivity extends AppCompatActivity {
             if(dhruvb){
                 foldername = "dhruv";
             }
-            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/" + foldername + String.valueOf(number1) + ".jpg");
+            File file = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/" + foldername);
+            File dir = new File("/sdcard/android/data/com.rajcomics.scannerapp/files/pictures/" + foldername + "/" + numberofPictures.INSTANCE.getNumber() + ".jpg");
             if(!file.exists())file.mkdirs();
-            FileOutputStream fOut = new FileOutputStream(file);
+            FileOutputStream fOut = new FileOutputStream(dir);
             bitmap7.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
             try {
                 fOut.flush();
@@ -276,11 +306,9 @@ public class CoverActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            bitmap7.recycle();
             System.gc();
-            number1 = number1 + 1;
+            numberofPictures.INSTANCE.addNumber(1);
         }
-
 
     }
     @RequiresApi(api = Build.VERSION_CODES.FROYO)
