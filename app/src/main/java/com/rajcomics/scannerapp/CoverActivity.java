@@ -27,6 +27,8 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -95,6 +97,7 @@ public class CoverActivity extends AppCompatActivity {
         calcbutton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
+                reset();
                 main(bitmap7);
             }
         });
@@ -240,6 +243,16 @@ public class CoverActivity extends AppCompatActivity {
         BarcodeImage.setImageBitmap(bmOut);
         return bmOut;
     }
+    public void reset(){
+        TextView detected = findViewById(R.id.detectedtext);
+        CheckBox nagraj = findViewById(R.id.nagraj);
+        CheckBox doga = findViewById(R.id.doga);
+        CheckBox dhruv = findViewById(R.id.dhruva);
+        detected.setText("");
+        nagraj.setChecked(false);
+        doga.setChecked(false);
+        dhruv.setChecked(false);
+    }
 
     public void getAverageColor(Bitmap bitmap){
         bitmap = toGrayscale(bitmap);
@@ -352,13 +365,16 @@ public class CoverActivity extends AppCompatActivity {
                         public void onSuccess(List<FirebaseVisionImageLabel> labels) {
                             Log.d("Characters", "success");
                             int x = 0;
+
                             for (FirebaseVisionImageLabel label: labels) {
 
                                 String text = label.getText();
                                 float confidence = label.getConfidence();
                                 if (x == 0){
                                     TextView chare = findViewById(R.id.textView5);
+                                    TextView chare2 = findViewById(R.id.confidencetext);
                                     chare.setText(text);
+                                    chare2.setText(String.valueOf(confidence));
                                 }
                                 Log.d("Characters", "running");
                                 Log.d("Characters", "Text: " + text + " confidence: " + confidence);

@@ -42,7 +42,79 @@
         android:layout_height="28dp"
         android:layout_marginStart="25dp"
         android:layout_marginTop="79dp"
-        android:text="TextView"
+        android:text=" "
         app:layout_constraintStart_toEndOf="@+id/NameView"
+        app:layout_constraintTop_toBottomOf="@+id/coverView" />
+
+    <TextView
+        android:id="@+id/Confidence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="2dp"
+        android:text="Confidence:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/NameView" />
+
+    <TextView
+        android:id="@+id/confidencetext"
+        android:layout_width="147dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="64dp"
+        android:text=" "
+        app:layout_constraintStart_toEndOf="@+id/Confidence"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <CheckBox
+        android:id="@+id/nagraj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="29dp"
+        android:text="Nagraj"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calcbutton" />
+
+    <CheckBox
+        android:id="@+id/doga"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="9dp"
+        android:text="Doga"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nagraj" />
+
+    <CheckBox
+        android:id="@+id/dhruva"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="8dp"
+        android:text="Dhruva"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/doga" />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="79dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="73dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginBottom="31dp"
+        android:text="Detected Text:"
+        app:layout_constraintBottom_toTopOf="@+id/NameView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/coverView" />
+
+    <TextView
+        android:id="@+id/detectedtext"
+        android:layout_width="149dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="29dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/textView5"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/coverView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
